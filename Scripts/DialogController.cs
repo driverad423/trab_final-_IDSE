@@ -23,7 +23,7 @@ public class DialogController : MonoBehaviour
         PlayerPrefs.SetString("name", name.text);
         PlayerPrefs.Save();
 
-        SceneManager.LoadScene("Scores", LoadSceneMode.Additive);
+        SceneManager.LoadScene("Scores");
         //launch scoresScene;
     }
 
@@ -32,6 +32,6 @@ public class DialogController : MonoBehaviour
         PlayerPrefs.SetString("name", "none");
         PlayerPrefs.Save();
 
-        SceneManager.LoadScene("MainMenu", LoadSceneMode.Additive);
+        SceneManager.LoadScene("MainMenu");
     }
 }

@@ -10,7 +10,8 @@ public class PlatformController : MonoBehaviour
     public int status;
     public int id;
 
-    Text TextPlatform;
+    private Text TextPlatform;
+    public AudioSource audio;
     public AddAnimationController animationController;
     
     public float onWaitTime;
@@ -26,7 +27,7 @@ public class PlatformController : MonoBehaviour
         waitTime = 7f;
         onWaitTime = waitTime;
         TextPlatform = GetComponentInChildren<Text>();
-        
+        audio = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -61,6 +62,7 @@ public class PlatformController : MonoBehaviour
     {
         if (status == 0)
         {
+            audio.Play();
             animationController.launchAnimation(TextPlatform.text);
             status = 1;
             EventLauncher.addStep(id);   

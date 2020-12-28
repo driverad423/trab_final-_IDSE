@@ -49,12 +49,6 @@ public class HighscoreController : MonoBehaviour
             }
         }
         
-        /*
-        for(int i = 0; i < 10; ++i)
-        {
-            CreateEntry(highscores.highscoresList[i], containerT, highscoresTransformList);
-        }
-        */
 
         foreach(HighScore h in highscores.highscoresList)
         {
@@ -113,7 +107,7 @@ public class HighscoreController : MonoBehaviour
 
     public void Menu()
     {
-        SceneManager.LoadScene("MainMenu", LoadSceneMode.Additive);
+        SceneManager.LoadScene("MainMenu");
     }
 }
 

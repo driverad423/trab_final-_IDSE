@@ -8,9 +8,14 @@ public class LevelController : MonoBehaviour
 {
     public List<PlatformController> platforms = new List<PlatformController>();
 
-    public int target;
-    public int streak;
-    public int value;
+    private AudioSource audio;
+
+    public int maxTarget;
+    public int minTarget;
+
+    private int target;
+    private int streak;
+    private int value;
 
     public bool stop;
 
@@ -23,15 +28,27 @@ public class LevelController : MonoBehaviour
     public Text TextValue;
     public Text TextScore;
 
+    public Camera cam;
+
     // Start is called before the first frame update
     void Start()
     {
+        cam.clearFlags = CameraClearFlags.SolidColor;
+
+        audio = GetComponent<AudioSource>();
+
         streak = 0;
-        time = 25f;
+        time = 30f;
         value = 0;
         stop = false;
 
-        target = Random.Range(3, 10) + 1;
+        maxTarget = 10;
+        minTarget = -8;
+
+        do
+        {
+            target = Random.Range(minTarget, maxTarget);
+        } while (target == 0);
 
         TextTarget.text = "Target: " + target.ToString();
         startPlatforms();
@@ -52,7 +69,7 @@ public class LevelController : MonoBehaviour
 
         for(int i = 0; i < platforms.Count; ++i)
         {
-            int number = Random.Range(0 - target, target + 1);
+            int number = Random.Range(minTarget, maxTarget);
                 
             platforms[i].valuePlatform = number;
             platforms[i].id = i;
@@ -67,7 +84,7 @@ public class LevelController : MonoBehaviour
         
         value += preValue;
 
-        platforms[platform].valuePlatform = Random.Range(0 - target, target + 1);
+        platforms[platform].valuePlatform = Random.Range(minTarget, maxTarget);
 
         TextValue.text = value.ToString();
     }
@@ -88,20 +105,26 @@ public class LevelController : MonoBehaviour
     }
 
     void updateTarget() {
+
+        audio.Play();
+
         value = 0;
+        streak += 1;
+        time += 25f;
+        maxTarget = maxTarget + ((int)Mathf.Floor(streak * 1.3f));
+        minTarget = minTarget - ((int)Mathf.Floor(streak * 1.3f));
+
         //launch effect
-        int aux = target;
+
         do
         {
-            target = Random.Range(-20, 20) + 1;
-        } while (target != aux);
+            target = Random.Range(minTarget, maxTarget);
+        } while (target == 0);
 
-        time += 25f;
 
         TextValue.text = value.ToString();
         TextTarget.text = "Target: " + target.ToString();
         TextScore.text = "Score: " + (streak * 100).ToString();
-        streak += 1;
     }
 
     void checkLose()
@@ -110,15 +133,12 @@ public class LevelController : MonoBehaviour
         {
             stopTime();
 
-            SceneManager.LoadScene("Dialog", LoadSceneMode.Additive);
+            SceneManager.LoadScene("Dialog");
 
             PlayerPrefs.SetString("score", (streak * 100).ToString());
             PlayerPrefs.SetString("name", "Alexis");
             PlayerPrefs.Save();
-            //SceneManager.LoadScene("Scores");
-           
         }
-        
     }
 
     void timeController()
@@ -126,13 +146,17 @@ public class LevelController : MonoBehaviour
         if (!stop)
         {
             time -= 1 * Time.deltaTime;
-           
         }
-       // if (time == 0)
-        //{
-          //  SceneManager.LoadScene("Scores");
-        //}
-
+        if(time <= 15)
+        {
+            
+            float f = Mathf.PingPong(Time.time, 3.0f) / 3.0f;
+            cam.backgroundColor = Color.Lerp(new Color(0.9f, 0.3f, 0.3f, 0.7f), new Color(0.9f, 0.3f, 0.3f, 0.1f), f);
+            //TextChrono.color = new Color(212, 0, 0);
+        }else
+        {
+            cam.backgroundColor = Color.white;
+        }
     }
     
     void stopTime()
